@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  db:
+    image: 'mysql:latest'
+    restart: unless-stoped
+    environment:
+      MYSQL_DATABASE: laravel
+    volumes:
+      - db:/var/lib/mysql
+    ports:
+      - '3306:3306'
+    env_file:
+      - .env
+  php-server:
+    build:
+      context: ./server
+    ports:
+      - '8080:80'
+    volumes:
+      - ./src:/var/www/laravel
+      - ./apache/default.conf:/etc/apache2/sites-enabled/000-default.conf
+    depends_on:
+      - db
+volumes:
+  db:
+    driver: local
